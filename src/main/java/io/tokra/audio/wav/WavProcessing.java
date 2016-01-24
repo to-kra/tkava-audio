@@ -49,10 +49,10 @@ public class WavProcessing {
 	/**
 	 * @author Tomas Kramaric
 	 * @since Feb 24, 2015
-	 * @param wavFile
-	 * @return
-	 * @throws IOException
-	 * @throws URISyntaxException
+	 * @param wavFile wav file
+	 * @return {@link WavInfo} wav info
+	 * @throws IOException io exception
+	 * @throws URISyntaxException uri syntax exception
 	 */
 	public static WavInfo readWavFileSamples(File wavFile) throws IOException, URISyntaxException {
 		StopWatch sw = new StopWatch();
@@ -104,10 +104,10 @@ public class WavProcessing {
 	/**
 	 * @author Tomas Kramaric
 	 * @since Feb 24, 2015
-	 * @param buf
-	 * @param headerChunkSize
-	 * @return
-	 * @throws IOException
+	 * @param buf {@link ByteBuffer}
+	 * @param headerChunkSize header chunk size
+	 * @return {@link WavInfo}
+	 * @throws IOException io exception
 	 */
 	protected static WavInfo processDataChunk(ByteBuffer buf, int headerChunkSize) throws IOException {
 		StopWatch sw = new StopWatch();
@@ -131,10 +131,10 @@ public class WavProcessing {
 	 * 
 	 * @author ToKra
 	 * @since Feb 24, 2015 
-	 * @param file
-	 * @return
-	 * @throws IOException
-	 */
+	 * @param file file
+	 * @return file length
+	 * @throws IOException io exception
+	 */ //FIXME use Files instead
 	public static long getFileLenght(File file) throws IOException {
 		InputStream is = new FileInputStream(file);
 		try {
@@ -150,10 +150,10 @@ public class WavProcessing {
 	 * 
 	 * @author ToKra
 	 * @since Feb 23, 2015 
-	 * @param byteBuffer
-	 * @param arrayLength
-	 * @return
-	 * @throws IOException
+	 * @param byteBuffer {@link ByteBuffer}
+	 * @param arrayLength array length
+	 * @return data as integer
+	 * @throws IOException io expception
 	 */
 	public static int getNumber(ByteBuffer byteBuffer, int arrayLength) throws IOException{
 		int number = 0;
@@ -169,10 +169,10 @@ public class WavProcessing {
 	 * 
 	 * @author ToKra
 	 * @since Feb 23, 2015 
-	 * @param byteBuffer
-	 * @param arrayLenght
-	 * @return
-	 * @throws IOException
+	 * @param byteBuffer {@link ByteBuffer}
+	 * @param arrayLenght array lentght integer
+	 * @return data as string
+	 * @throws IOException io exception
 	 */
 	public static String getText(ByteBuffer byteBuffer, int arrayLenght) throws IOException{
 		char[] array = new char[arrayLenght];
@@ -187,8 +187,8 @@ public class WavProcessing {
 	 * 
 	 * @author ToKra
 	 * @since Feb 23, 2015 
-	 * @param param
-	 * @return
+	 * @param param byte number
+	 * @return unsigned byte as short
 	 */
 	public static short getUnsignedByte(byte param) {
 	    return (short) (param & 0xFF);
@@ -198,10 +198,10 @@ public class WavProcessing {
 	 * 
 	 * @author ToKra
 	 * @since Feb 23, 2015 
-	 * @param byteBuffer
-	 * @param lowerBits
-	 * @param upperBits
-	 * @throws IOException
+	 * @param byteBuffer {@link ByteBuffer}
+	 * @param lowerBits as short array
+	 * @param upperBits as short array
+	 * @throws IOException io exception
 	 */
 	public static void readBits(ByteBuffer byteBuffer, short[] lowerBits, short[] upperBits) throws IOException {
 		StopWatch sw = new StopWatch();
@@ -228,9 +228,9 @@ public class WavProcessing {
 	 * 
 	 * @author ToKra
 	 * @since Feb 23, 2015 
-	 * @param lower
-	 * @param upper
-	 * @return
+	 * @param lower bits as short array
+	 * @param upper bits as short array
+	 * @return short array of decoded pcm16
 	 */
 	public static short[] decodePCM16bit(short[] lower, short[] upper){
 		StopWatch sw = new StopWatch();
@@ -248,8 +248,7 @@ public class WavProcessing {
 	
 	/**
 	 * @author Tomas Kramaric
-	 * @lastModified 12.5.2014 | refactor
-	 * @param foldedVoiceSamples
+	 * @param foldedVoiceSamples in {@link List} of short's
 	 * @return {@link ByteArrayOutputStream} wav representation
 	 */
 	public static ByteArrayOutputStream createWavFromAudioSamples(List<Short> foldedVoiceSamples) {

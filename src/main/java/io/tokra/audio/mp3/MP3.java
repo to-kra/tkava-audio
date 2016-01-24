@@ -12,7 +12,6 @@ import javax.media.Player;
 public class MP3 extends Thread {
 
 	public MP3() {
-		// TODO Auto-generated constructor stub
 	}
 
 	private URL url;

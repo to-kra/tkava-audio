@@ -112,9 +112,9 @@ public class WavInfo {
 		 * 
 		 * @author tokra
 		 * @since Feb 24, 2015
-		 * @param buf
-		 * @return FMT
-		 * @throws IOException
+		 * @param buf {@link ByteBuffer}
+		 * @return FMT {@link FMT}
+		 * @throws IOException io exception
 		 */
 		public static FMT getFmtChunk(ByteBuffer buf) throws IOException {
 			FMT fmt = new FMT();
