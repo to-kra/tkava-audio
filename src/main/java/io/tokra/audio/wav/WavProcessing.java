@@ -1,5 +1,8 @@
 package io.tokra.audio.wav;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -9,6 +12,7 @@ import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.List;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
@@ -240,6 +244,62 @@ public class WavProcessing {
 		sw.stop();
 		logger.debug("Decode PCM... Runtime: '{}' ms", sw.getTime());
 		return samples;
+	}
+	
+	/**
+	 * @author Tomas Kramaric
+	 * @lastModified 12.5.2014 | refactor
+	 * @param foldedVoiceSamples
+	 * @return {@link ByteArrayOutputStream} wav representation
+	 */
+	public static ByteArrayOutputStream createWavFromAudioSamples(List<Short> foldedVoiceSamples) {
+		int wavSize = foldedVoiceSamples.size() * 2 + 36;
+		int dataSize = foldedVoiceSamples.size() * 2;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		DataOutputStream dos = new DataOutputStream(baos);
+
+		try {
+			logger.info("Creating WAV header");
+			dos.write("RIFF".getBytes()); // chunk ID
+			dos.writeInt(intLittleEndian(wavSize)); // velkost wavka -8
+			dos.write("WAVE".getBytes()); // RIFF typ
+			dos.write("fmt ".getBytes()); // subchunk ID
+			dos.writeInt(intLittleEndian(16)); // velkost fmt chunku
+			dos.writeShort(shortLittleEndian(1)); // audio format
+			dos.writeShort(shortLittleEndian(1)); // pocet kanalov
+			dos.writeInt(intLittleEndian(16000)); // sample rate
+			dos.writeInt(intLittleEndian(32000)); // byte rate
+			dos.writeShort(shortLittleEndian(2)); // wave blok zarovnanie
+			dos.writeShort(shortLittleEndian(16)); // bit/sakunda
+			dos.write("data".getBytes()); // subchunk2 ID
+			dos.writeInt(intLittleEndian(dataSize)); // dlzka datovej casti
+
+			logger.info("Creating WAV content");
+			for(Short sample : foldedVoiceSamples){
+				dos.writeShort(shortLittleEndian(sample.shortValue()));
+			}
+			dos.flush();
+
+		} catch (IOException e) {
+			logger.info("Could not create WAV content");
+		}
+		return baos;
+	}
+	
+	public static InputStream getWavInputStreamFromAudioSamples(List<Short> foldedVoiceSamples) {
+		ByteArrayOutputStream baos = WavProcessing.createWavFromAudioSamples(foldedVoiceSamples);
+		if (baos != null) {
+			return new ByteArrayInputStream(baos.toByteArray());
+		}
+		return null;
+	}
+	
+	protected static final int intLittleEndian(int v) {
+		return (v >>> 24) | (v << 24) | ((v << 8) & 0x00FF0000) | ((v >> 8) & 0x0000FF00); 
+	}
+
+	protected static final int shortLittleEndian(int v) {
+		return ((v >>> 8) & 0x00FF) | ((v << 8) & 0xFF00);
 	}
 
 }
